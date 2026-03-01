@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "nodemon src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node --max-old-space-size=400 dist/index.js"
   },
   "dependencies": {
     "@socket.io/redis-adapter": "^8.3.0",
