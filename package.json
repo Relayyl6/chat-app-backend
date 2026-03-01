@@ -2,7 +2,7 @@
   "name": "chat-backend",
   "version": "1.0.0",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "node --max-old-space-size=400 dist/index.js"
   },
