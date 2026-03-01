@@ -9,10 +9,12 @@ import { connectRedis } from './config/redis.ts';
 import channelRouter from './routes/channel.routes.ts';
 import messageRouter from './routes/message.routes.ts';
 import { setupDNS } from './utils/dns-resolver.ts';
-
+import { startHealthCheckJob } from './cron/cron.ts';
+import { REDIS_URL } from './config/env.config.ts'
 
 dotenv.config();
 
+console.log('REDIS_URL:', REDIS_URL); // 👈 add this
 const app = express();
 const httpServer = createServer(app);
 
@@ -29,8 +31,8 @@ app.use('/api/channels', channelRouter);
 app.use('/api/messages', messageRouter);
 
 // Health check
-app.get('/health', (req, res) => {
-  res.status(200).json({ success: true, timestamp: Date.now().toString() });
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ success: true, status: "Backed is up and running", timestamp: Date.now().toString() });
 });
 
 // Initialize Socket.IO and make it accessible in routes
@@ -46,6 +48,7 @@ const startServer = async () => {
   try {
     await connectToDatabase();
     await connectRedis();
+    startHealthCheckJob()
     
     httpServer.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
