@@ -1,4 +1,5 @@
 import swaggerJsdoc from 'swagger-jsdoc';
+import { API_URL } from './env.config';
 
 const options = {
     definition: {
@@ -14,12 +15,8 @@ const options = {
         },
         servers: [
             {
-                url: 'http://localhost:3000/api',
-                description: 'Development server'
-            },
-            {
-                url: 'https://api.example.com',
-                description: 'Production server'
+                url: `${API_URL}`,
+                description: API_URL.includes('localhost') ? 'Development server' : 'Production server'
             }
         ],
         components: {
