@@ -2,38 +2,64 @@ import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import authRouter from './routes/auth.routes.ts';
-import { initializeSocket } from './socket/socket.manager.ts';
-import { connectToDatabase } from './config/database.ts';
-import { connectRedis } from './config/redis.ts';
-import channelRouter from './routes/channel.routes.ts';
-import messageRouter from './routes/message.routes.ts';
-import { setupDNS } from './utils/dns-resolver.ts';
-import { startHealthCheckJob } from './cron/cron.ts';
-import { REDIS_URL } from './config/env.config.ts'
+import swaggerUi from 'swagger-ui-express';
+import authRouter from './routes/auth.routes';
+import { initializeSocket } from './socket/socket.manager';
+import { connectToDatabase } from './config/database';
+import { connectRedis } from './config/redis';
+import channelRouter from './routes/channel.routes';
+import messageRouter from './routes/message.routes';
+import { setupDNS } from './utils/dns-resolver';
+import { startHealthCheckJob } from './cron/cron';
+import { REDIS_URL } from './config/env.config';
+import errorMiddleware from './middleware/error.middleware';
+import { sanitizeInputs, rateLimitByUser, validateRequestSize } from './middleware/validation.middleware';
+import { swaggerSpec } from './config/swagger';
 
 dotenv.config();
 
-console.log('REDIS_URL:', REDIS_URL); // 👈 add this
+console.log('REDIS_URL:', REDIS_URL);
 const app = express();
 const httpServer = createServer(app);
 
-// Middleware
+// Middleware - Order matters!
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'];
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || '*',
+  origin: allowedOrigins,
   credentials: true
 }));
 app.use(express.json());
+
+// Security and validation middleware
+app.use(validateRequestSize(10)); // Limit request size (10MB)
+app.use(sanitizeInputs); // XSS prevention and input sanitization
+app.use(rateLimitByUser(30, 60000)); // Rate limiting per user (30 req/min)
+
+// Swagger Documentation
+app.use('/api-docs', swaggerUi.serve);
+app.get('/api-docs', swaggerUi.setup(swaggerSpec));
+
+app.get('/api-docs/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
 
 // Routes
 app.use('/api/auth', authRouter);
 app.use('/api/channels', channelRouter);
 app.use('/api/messages', messageRouter);
 
-// Health check
+// Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ success: true, status: "Backed is up and running", timestamp: Date.now().toString() });
+  res.status(200).json({
+    success: true,
+    status: 'Backend is up and running',
+    timestamp: new Date().toISOString()
+  });
 });
+
+// Error handling middleware (must be registered after all routes)
+app.use(errorMiddleware);
 
 // Initialize Socket.IO and make it accessible in routes
 const io = initializeSocket(httpServer);
@@ -42,19 +68,21 @@ app.set('io', io);
 // Start server
 const PORT = process.env.PORT || 3000;
 
-
-
 const startServer = async () => {
   try {
     await connectToDatabase();
     await connectRedis();
-    startHealthCheckJob()
-    
+    startHealthCheckJob();
+
     httpServer.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
+      console.log(`\n✅ Server running on port ${PORT}`);
+      console.log(`📍 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+      console.log(`🔌 WebSocket enabled via Socket.IO`);
+      console.log('\n✨ Ready to accept connections!\n');
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };

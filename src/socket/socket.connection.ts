@@ -1,9 +1,9 @@
-import getRedisClient from "../config/redis.ts";
-import channelModel from "../models/Channel.ts";
-import userModel from "../models/User.ts";
-import { handleMessage } from "./handlers/message.handler.ts";
-import { handleTyping } from "./handlers/typing.handler.ts";
-import { AuthSocket } from "./socket.manager.ts";
+import getRedisClient from "../config/redis";
+import channelModel from "../models/Channel";
+import userModel from "../models/User";
+import { handleMessage } from "./handlers/message.handler";
+import { handleTyping } from "./handlers/typing.handler";
+import { AuthSocket } from "./socket.manager";
 import { Server } from 'socket.io'
 
 export const getUserchannels = async (userId: string): Promise<string[]> => {

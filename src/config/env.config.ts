@@ -1,5 +1,4 @@
 import { config } from 'dotenv';
-import processs from 'process'
 
 config({ path: `.env.local` });
 
