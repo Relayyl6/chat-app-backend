@@ -11,22 +11,22 @@ import channelRouter from './routes/channel.routes';
 import messageRouter from './routes/message.routes';
 import { setupDNS } from './utils/dns-resolver';
 import { startHealthCheckJob } from './cron/cron';
-import { REDIS_URL } from './config/env.config';
+import { REDIS_URL, API_URL, ALLOWED_ORIGINS, PORT, NODE_ENV } from './config/env.config';
 import errorMiddleware from './middleware/error.middleware';
 import { sanitizeInputs, rateLimitByUser, validateRequestSize } from './middleware/validation.middleware';
 import { swaggerSpec } from './config/swagger';
 
 dotenv.config();
 
-console.log('REDIS_URL:', REDIS_URL);
 const app = express();
 const httpServer = createServer(app);
 
 // Middleware - Order matters!
-const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:3001'];
 app.use(cors({
-  origin: allowedOrigins,
-  credentials: true
+  origin: ALLOWED_ORIGINS,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
 
@@ -37,7 +37,11 @@ app.use(rateLimitByUser(30, 60000)); // Rate limiting per user (30 req/min)
 
 // Swagger Documentation
 app.use('/api-docs', swaggerUi.serve);
-app.get('/api-docs', swaggerUi.setup(swaggerSpec));
+app.get('/api-docs', swaggerUi.setup(swaggerSpec, {
+  swaggerOptions: {
+    url: `${API_URL}/api-docs/swagger.json`
+  }
+}));
 
 app.get('/api-docs/swagger.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json');
@@ -54,6 +58,8 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
     status: 'Backend is up and running',
+    environment: NODE_ENV,
+    apiUrl: API_URL,
     timestamp: new Date().toISOString()
   });
 });
@@ -66,7 +72,6 @@ const io = initializeSocket(httpServer);
 app.set('io', io);
 
 // Start server
-const PORT = process.env.PORT || 3000;
 
 const startServer = async () => {
   try {
@@ -76,9 +81,11 @@ const startServer = async () => {
 
     httpServer.listen(PORT, () => {
       console.log(`\n✅ Server running on port ${PORT}`);
-      console.log(`📍 API Base URL: http://localhost:${PORT}/api`);
-      console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+      console.log(`📍 API Base URL: ${API_URL}/api`);
+      console.log(`📚 API Documentation: ${API_URL}/api-docs`);
       console.log(`🔌 WebSocket enabled via Socket.IO`);
+      console.log(`🌍 Environment: ${NODE_ENV}`);
+      console.log(`🔐 CORS Origins: ${ALLOWED_ORIGINS.join(', ')}`);
       console.log('\n✨ Ready to accept connections!\n');
     });
   } catch (error) {
