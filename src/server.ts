@@ -1,7 +1,9 @@
+import dotenv from 'dotenv';
+dotenv.config();
 import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
-import dotenv from 'dotenv';
+
 import swaggerUi from 'swagger-ui-express';
 import authRouter from './routes/auth.routes';
 import { initializeSocket } from './socket/socket.manager';
@@ -16,7 +18,7 @@ import errorMiddleware from './middleware/error.middleware';
 import { sanitizeInputs, rateLimitByUser, validateRequestSize } from './middleware/validation.middleware';
 import { swaggerSpec } from './config/swagger';
 
-dotenv.config();
+
 
 const app = express();
 const httpServer = createServer(app);
