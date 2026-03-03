@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -39,7 +39,7 @@ app.use(rateLimitByUser(30, 60000)); // Rate limiting per user (30 req/min)
 app.use('/api-docs', swaggerUi.serve);
 app.get('/api-docs', swaggerUi.setup(swaggerSpec));
 
-app.get('/api-docs/swagger.json', (req, res) => {
+app.get('/api-docs/swagger.json', (req: Request, res: Response) => {
   res.setHeader('Content-Type', 'application/json');
   res.send(swaggerSpec);
 });
@@ -50,7 +50,7 @@ app.use('/api/channels', channelRouter);
 app.use('/api/messages', messageRouter);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get('/api/health', (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     status: 'Backend is up and running',
