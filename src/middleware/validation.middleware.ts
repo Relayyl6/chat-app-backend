@@ -145,7 +145,10 @@ export const validate = (schema: z.ZodSchema, target: 'body' | 'query' | 'params
             if (target === 'body') {
                 req.body = validatedData as any;
             } else if (target === 'query') {
-                req.query = validatedData as any;
+                //@ts-ignore
+                Object.keys(validatedData).forEach(key => {
+                    (req.query as any)[key] = (validatedData as any)[key];
+                });
             } else {
                 req.params = validatedData as any;
             }
@@ -187,7 +190,7 @@ export const validateObjectId = (paramName: string = 'id') => {
 export const sanitizeInputs = (req: Request, res: Response, next: NextFunction) => {
     const sanitizeValue = (value: any): any => {
         if (typeof value === 'string') {
-            return value.trim().replace(/[<>]/g, ''); // Remove potential HTML tags
+            return value.trim().replace(/[<>]/g, '');
         }
         if (Array.isArray(value)) {
             return value.map(sanitizeValue);
@@ -202,7 +205,13 @@ export const sanitizeInputs = (req: Request, res: Response, next: NextFunction) 
     };
 
     req.body = sanitizeValue(req.body);
-    req.query = sanitizeValue(req.query);
+
+    // ✅ Express 5: req.query is read-only, mutate in place instead
+    const sanitizedQuery = sanitizeValue(req.query);
+    Object.keys(sanitizedQuery).forEach(key => {
+        (req.query as any)[key] = sanitizedQuery[key];
+    });
+
     next();
 };
 
