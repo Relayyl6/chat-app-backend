@@ -1,5 +1,6 @@
 import swaggerJsdoc from 'swagger-jsdoc';
 import { API_URL } from './env.config';
+import path from 'path';
 
 const options = {
     definition: {
@@ -77,9 +78,10 @@ const options = {
         }
     },
     apis: [
-        './src/routes/auth.routes.ts',
-        './src/routes/channel.routes.ts',
-        './src/routes/message.routes.ts'
+        // Use dynamic paths that work in both dev and production
+        path.join(__dirname, '../routes/auth.routes'),
+        path.join(__dirname, '../routes/channel.routes'),
+        path.join(__dirname, '../routes/message.routes')
     ]
 };
 
