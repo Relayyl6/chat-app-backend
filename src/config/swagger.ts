@@ -79,9 +79,9 @@ const options = {
     },
     apis: [
         // Use dynamic paths that work in both dev and production
-        path.join(__dirname, '../routes/auth.routes'),
-        path.join(__dirname, '../routes/channel.routes'),
-        path.join(__dirname, '../routes/message.routes')
+        path.join(__dirname, '../routes/auth.routes.js'),
+        path.join(__dirname, '../routes/channel.routes.js'),
+        path.join(__dirname, '../routes/message.routes.js')
     ]
 };
 
