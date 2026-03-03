@@ -24,7 +24,7 @@ messageRouter.use(sanitizeInputs);
 
 /**
  * @swagger
- * /messages/{channelId}:
+ * /api/messages/{channelId}:
  *   get:
  *     summary: Get channel messages
  *     tags: [Messages]
@@ -52,7 +52,7 @@ messageRouter.get('/:channelId', validateObjectId('channelId'), getChannelMessag
 
 /**
  * @swagger
- * /messages/{channelId}/send:
+ * /api/messages/{channelId}/send:
  *   post:
  *     summary: Send message
  *     tags: [Messages]
@@ -85,7 +85,7 @@ messageRouter.post('/:channelId/send', validateObjectId('channelId'), validate(s
 
 /**
  * @swagger
- * /messages/{channelId}/read:
+ * /api/messages/{channelId}/read:
  *   post:
  *     summary: Mark messages as read
  *     tags: [Messages]
@@ -105,7 +105,7 @@ messageRouter.post('/:channelId/read', validateObjectId('channelId'), markAsRead
 
 /**
  * @swagger
- * /messages/{channelId}/{messageId}/delete:
+ * /api/messages/{channelId}/{messageId}/delete:
  *   delete:
  *     summary: Delete message
  *     tags: [Messages]
@@ -130,7 +130,7 @@ messageRouter.delete('/:channelId/:messageId/delete', validateObjectId('channelI
 
 /**
  * @swagger
- * /messages/{channelId}/{messageId}/edit:
+ * /api/messages/{channelId}/{messageId}/edit:
  *   put:
  *     summary: Edit message
  *     tags: [Messages]
@@ -164,7 +164,7 @@ messageRouter.put('/:channelId/:messageId/edit', validateObjectId('channelId'), 
 
 /**
  * @swagger
- * /messages/{channelId}/{messageId}/react:
+ * /api/messages/{channelId}/{messageId}/react:
  *   post:
  *     summary: React to message
  *     tags: [Messages]
@@ -198,7 +198,7 @@ messageRouter.post('/:channelId/:messageId/react', validateObjectId('channelId')
 
 /**
  * @swagger
- * /messages/{channelId}/search:
+ * /api/messages/{channelId}/search:
  *   get:
  *     summary: Search messages
  *     tags: [Messages]

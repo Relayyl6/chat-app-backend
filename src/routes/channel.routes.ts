@@ -27,7 +27,7 @@ channelRouter.use(sanitizeInputs);
 
 /**
  * @swagger
- * /channels:
+ * /api/channels:
  *   post:
  *     summary: Create a new channel
  *     tags: [Channels]
@@ -59,7 +59,7 @@ channelRouter.post('/', validate(createChannelSchema), createChannel);
 
 /**
  * @swagger
- * /channels:
+ * /api/channels:
  *   get:
  *     summary: Get all user channels
  *     tags: [Channels]
@@ -73,7 +73,7 @@ channelRouter.get('/', getChannels);
 
 /**
  * @swagger
- * /channels/search:
+ * /api/channels/search:
  *   get:
  *     summary: Search channels
  *     tags: [Channels]
@@ -95,7 +95,7 @@ channelRouter.get('/search', (req, res, next) => {
 
 /**
  * @swagger
- * /channels/{channelId}:
+ * /api/channels/{channelId}:
  *   get:
  *     summary: Get channel details
  *     tags: [Channels]
@@ -115,7 +115,7 @@ channelRouter.get('/:channelId', validateObjectId('channelId'), getChannel);
 
 /**
  * @swagger
- * /channels/{channelId}/rename:
+ * /api/channels/{channelId}/rename:
  *   post:
  *     summary: Rename channel
  *     tags: [Channels]
@@ -144,7 +144,7 @@ channelRouter.post('/:channelId/rename', validateObjectId('channelId'), renameCh
 
 /**
  * @swagger
- * /channels/{channelId}/add-members:
+ * /api/channels/{channelId}/add-members:
  *   post:
  *     summary: Add members to channel
  *     tags: [Channels]
@@ -175,7 +175,7 @@ channelRouter.post('/:channelId/add-members', validateObjectId('channelId'), add
 
 /**
  * @swagger
- * /channels/{channelId}/{userId}/remove-member:
+ * /api/channels/{channelId}/{userId}/remove-member:
  *   post:
  *     summary: Remove member from channel
  *     tags: [Channels]
@@ -200,7 +200,7 @@ channelRouter.post('/:channelId/:userId/remove-member', validateObjectId('channe
 
 /**
  * @swagger
- * /channels/{channelId}/members/role:
+ * /api/channels/{channelId}/members/role:
  *   patch:
  *     summary: Update member role
  *     tags: [Channels]
@@ -232,7 +232,7 @@ channelRouter.patch('/:channelId/members/role', validateObjectId('channelId'), u
 
 /**
  * @swagger
- * /channels/{channelId}/leave:
+ * /api/channels/{channelId}/leave:
  *   post:
  *     summary: Leave channel
  *     tags: [Channels]
@@ -252,7 +252,7 @@ channelRouter.post('/:channelId/leave', validateObjectId('channelId'), leaveChan
 
 /**
  * @swagger
- * /channels/{channelId}/members:
+ * /api/channels/{channelId}/members:
  *   get:
  *     summary: Get channel members
  *     tags: [Channels]

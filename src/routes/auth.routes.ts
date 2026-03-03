@@ -7,7 +7,7 @@ const authRouter = Router();
 
 /**
  * @swagger
- * /auth/register:
+ * /api/auth/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Authentication]
@@ -58,7 +58,7 @@ authRouter.post('/register', validate(registerSchema), SignUp);
 
 /**
  * @swagger
- * /auth/login:
+ * /api/auth/login:
  *   post:
  *     summary: Login user
  *     tags: [Authentication]
@@ -87,7 +87,7 @@ authRouter.post('/login', validate(loginSchema), LogIn);
 
 /**
  * @swagger
- * /auth/current:
+ * /api/auth/current:
  *   get:
  *     summary: Get current user
  *     tags: [Authentication]
@@ -103,7 +103,7 @@ authRouter.get('/current', authMiddleware, getCurrentUser);
 
 /**
  * @swagger
- * /auth/profile:
+ * /api/auth/profile:
  *   put:
  *     summary: Update user profile
  *     tags: [Authentication]
