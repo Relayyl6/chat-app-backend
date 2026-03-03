@@ -18,8 +18,6 @@ import errorMiddleware from './middleware/error.middleware';
 import { sanitizeInputs, rateLimitByUser, validateRequestSize } from './middleware/validation.middleware';
 import { swaggerSpec } from './config/swagger';
 
-
-
 const app = express();
 const httpServer = createServer(app);
 
