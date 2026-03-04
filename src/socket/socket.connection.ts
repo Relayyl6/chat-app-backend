@@ -17,7 +17,10 @@ export const Connection = async (socket: AuthSocket, io: Server) => {
         "User ID:", socket.userId
     );
 
-    const redisClient = getRedisClient(); // 👈 call it here to get the actual client
+    // Join personal room so user receives direct notifications
+    socket.join(`user:${socket.userId}`);
+
+    const redisClient = getRedisClient(); // Get Redis client instance
 
     try {
         await userModel.findByIdAndUpdate(socket.userId, { status: 'online' });
