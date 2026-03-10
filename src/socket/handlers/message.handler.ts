@@ -35,7 +35,7 @@ export const handleMessage = async (io: Server, socket: AuthSocket, data: any) =
       { _id: channelId },
       {
         $set: {
-          lastMessage: {
+          lastMessageAt: {
             content: message.content,
             senderId: socket.userId,
             sentAt: message.createdAt,
