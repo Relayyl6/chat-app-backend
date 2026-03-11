@@ -6,7 +6,7 @@ import { Types } from 'mongoose';
 interface SendMessagePayload {
     content: string;
     replyTo?: string;
-    type?: 'text' | 'image' | 'file' | 'system';
+    type?: 'text' | 'image' | 'file' | 'system' | 'reactions';
     attachments?: Array<{ url: string; type: string; name: string; size: number }>;
 }
 
