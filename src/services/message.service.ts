@@ -81,11 +81,27 @@ export const getMessages = async (
             .populate('senderId', 'username avatar status')
             .populate('replyTo');
 
-        return messages.reverse();
+        return messages.reverse().map(m => ({
+            ...m.toObject(),
+            reactions: groupReactions(m.reactions ?? []),
+        }));
     } catch (error) {
         if (error instanceof AppError) throw error;
         throw new AppError("Error fetching messages", 500);
     }
+};
+
+export const groupReactions = (reactions: Array<{ userId: any; emoji: string }>) => {
+    const map: Record<string, { emoji: string; count: number; userIds: string[] }> = {};
+    for (const r of reactions) {
+        const uid = r.userId.toString();
+        if (!map[r.emoji]) {
+            map[r.emoji] = { emoji: r.emoji, count: 0, userIds: [] };
+        }
+        map[r.emoji].count += 1;
+        map[r.emoji].userIds.push(uid);
+    }
+    return Object.values(map);
 };
 
 export const markMessagesAsRead = async (channelId: string, userId: string, messageAutoId: number) => {
