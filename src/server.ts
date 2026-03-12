@@ -50,7 +50,7 @@ app.use('/api/channels', channelRouter);
 app.use('/api/messages', messageRouter);
 
 // Health check endpoint
-app.get('/api/health', (req: Request, res: Response) => {
+app.post('/api/health', (req: Request, res: Response) => {
   res.status(200).json({
     success: true,
     status: 'Backend is up and running',

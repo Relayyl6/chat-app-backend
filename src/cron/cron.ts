@@ -9,7 +9,7 @@ export const startHealthCheckJob = () => {
     return;
   }
 
-  const HEALTH_CHECK_URL = process.env.HEALTH_CHECK_URL || 'http://localhost:5000/api/health';
+  const HEALTH_CHECK_URL = `${process.env.HEALTH_CHECK_URL}/api/health` || 'http://localhost:5000/api/health';
 
   healthCheckJob = cron.schedule('*/14 * * * *', async () => {
     try {
