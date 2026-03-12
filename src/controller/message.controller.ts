@@ -17,7 +17,10 @@ export const sendMessage = async (req: AuthRequest, res: Response, next: NextFun
         const { content, attachments, replyTo } = req.body;
         const message = await sendMessageService(channelId, req.user._id, { content, attachments, replyTo });
         const io = req.app.get('io');
-        if (io) io.to(`channel:${channelId}`).emit('message:sent', message);
+        if (io) io.to(`channel:${channelId}`).emit('message:sent', {
+            ...message?.toObject(),
+            tempId: req.body.tempId ?? null,
+        });
         res.status(201).json({ success: true, data: { message }, message: 'Message sent successfully' });
     } catch (error) {
         next(error);
